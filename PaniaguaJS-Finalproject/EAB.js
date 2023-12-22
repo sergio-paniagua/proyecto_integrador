@@ -12,6 +12,8 @@ let item = {
   sat: "",
 };
 
+
+
 borrar = document.getElementById("borrar");
 interpretarU = document.getElementById("analizar");
 
@@ -50,7 +52,6 @@ borrar.addEventListener("click", (e) => {
   listaActividades.innerHTML = ""
   Eliminar();
   PintarDB();
- 
 });
 
 //ACA CREAMOS LA BASE DE DATOS CON LOS VALORES INGRESADOR POR EL USUARIO O VIA HOST DESDE EL 
@@ -74,7 +75,7 @@ const PintarDB = () => {
       <b>${element.o2}</b><br>
       <b>${element.hco2}</b><br>
       <b>${element.lactato}</b><br>
-      <b>${element.sat} mEq/L</b><br>
+      <b>${element.sat}</b><br>
   </div>`;
     });
   }
@@ -87,22 +88,21 @@ formularioU.addEventListener("submit", (e) => {
   let phU = document.querySelector("#ph").value;
   let co2U = document.querySelector("#co2").value;
   let o2U = document.querySelector("#o2").value;
-  let hco2U = document.querySelector("#hco2").value;
+  let hco3U = document.querySelector("#hco2").value;
   let lactatoU = document.querySelector("#lactato").value;
   let satU = document.querySelector("#sat").value;
-  CrearItem(nombreU, phU, co2U, o2U, hco2U, lactatoU, satU);
+  CrearItem(nombreU, phU, co2U, o2U, hco3U, lactatoU, satU);
   GuardarDB();
 });
 
-
 //Desarrollamos el codigo para la interpretacion de los resultados
 
-//VALIDACION DE MUESTRA...en caso de que la saturacion sea menor al 85% emitir una alerta
+//VALIDACION DE MUESTRA...en caso de que la saturacion sea menor al 90% emitir una alerta
 
 function muestraCorrecta(sat) {
   var sat = parseInt(document.getElementById("Sat").value);
   if (sat){
-      if (sat < 85) {
+      if (sat < 90) {
           alert("VERIFIQUE EL ESTADO DE LA MUESTRA ¿CORRESPONDE A SANGRE ARTERIAL?");
         } else {
          accederCalculadora();
@@ -121,38 +121,58 @@ const PaCO2 = 45;
 const HCO3 = 24;
 const SaO2 = 95;
 
-// Función para interpretar la gasometría arterial
+// INTERPRETACION GSA
 function interpretarGasometria(phU, o2U, co2U, hco2U, satU) {
+
+  let co2esperadoAc = 1.5 * hco2U + 8
+  let co2esperadoAl = 0.7 * hco2U  + 21 
+  let EBesperado = (co2U-40)*(0.4)
+
   // Evaluar el pH
   let interpretacion = "";
-  if (!phU){
-    if (phU < 7.35) {
-      interpretacion += "Acidosis. ";
-    } else if (phU > 7.45) {
-      interpretacion += "Alcalosis. ";
-    }
-  }else {
-    alert ("Debe rellenar todos los campos")
-  }
+  
+  if (phU < 7.35) {
+    interpretacion += "Acidosis. ";
 
+  } else if (phU > 7.45) {
+    interpretacion += "Alcalosis. ";
+  }
+   
+  // Evaluar el HCO3 ante un trastorno metabolico
+     if (hco2U > 26) {
+      if (co2esperadoAl < co2U){
+        interpretacion += "Alcalosis metabólica con acidosis respiratoria agregada, evaluar contexto";
+      }
+       if (co2esperadoAl > co2U){
+        interpretacion += "Alcalosis metabólica con una alcalosis respiratoria agregada, evaluar contexto";
+      } else if (co2esperadoAl = co2U){
+        interpretacion += "Alcalosis metabólica sin trastoro agregado"
+      }
+
+    } else if (hco2U < 22) {
+      if (co2esperadoAc < co2U){
+        interpretacion += "Acidosis metabólica con acidosis respiratoria agregada, evaluar contexto";
+      }
+       if (co2esperadoAc > co2U){
+        interpretacion += "Acidosis metabólica con una alcalosis respiratoria agregada, evaluar contexto";
+      } else if (co2esperadoAc = co2U){
+        interpretacion += "Acidosis metabólica sin trastoro agregado"
+      }
+    }
+
+    // Evaluar la PaCO2
+    if (co2U > 45) {
+      interpretacion += "Retención de CO2. ";
+    } else if (co2U < 35) {
+      interpretacion += "Eliminación excesiva de CO2. ";
+    }
+  
+ 
   // Evaluar la PaO2
   if (o2U < 80) {
     interpretacion += "Hipoxemia. ";
   }
 
-  // Evaluar la PaCO2
-  if (co2U > 45) {
-    interpretacion += "Retención de CO2. ";
-  } else if (co2U < 35) {
-    interpretacion += "Eliminación excesiva de CO2. ";
-  }
-
-  // Evaluar el HCO3
-  if (hco2U > 26) {
-    interpretacion += "Alcalosis metabólica. ";
-  } else if (hco2U < 22) {
-    interpretacion += "Acidosis metabólica. ";
-  }
 
   // Evaluar la SaO2
   if (satU < 90) {
@@ -162,8 +182,6 @@ function interpretarGasometria(phU, o2U, co2U, hco2U, satU) {
   // Devolver la interpretación
   return interpretacion;
 }
-
-
 //Botn analizar resultados
 interpretarU.addEventListener("click", (e) => {
   e.preventDefault();
@@ -171,14 +189,10 @@ interpretarU.addEventListener("click", (e) => {
   let co2U = document.querySelector("#co2").value;
   let o2U = document.querySelector("#o2").value;
   let hco2U = document.querySelector("#hco2").value;
-  let satU = document.getElementById("Sat").value;
-  interpretarGasometria(phU, o2U, co2U, hco2U, satU)
+  let satU = document.querySelector("#sat").value;
+  interpretarGasometria(phU, co2U, o2U, hco2U, satU)
   const resultadoInterpretacion = interpretarGasometria(phU, co2U, o2U, hco2U, satU);
-  Swal.fire({
-    icon: 'error',
-    title: 'Error',
-    text: resultadoInterpretacion,
-  })
+  alert (resultadoInterpretacion)
 });
 
 document.addEventListener("DOMContentLoaded", PintarDB());

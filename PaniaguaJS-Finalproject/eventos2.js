@@ -130,10 +130,10 @@ btnLogin.addEventListener("click", (e) => {
 });
 
 //SEGUNDA SECCION: VALIDACION DE MUESTRA
-function muestraCorrecta(sat) {
-    var sat = parseInt(document.getElementById("Sat").value);
-    if (sat){
-        if (sat < 80) {
+function muestraCorrecta(satU) {
+    var satU = parseInt(document.getElementById("Sat").value);
+    if (satU){
+        if (satU < 80) {
             Swal.fire({
                 icon: 'error',
                 title: 'Verifique el estado de la muestra',
