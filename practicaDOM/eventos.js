@@ -143,6 +143,8 @@ function mayorNum(){
 }
 }
 
+
+
 //6- Crear un boton que al pulsarlo genere una lista de 10 numeros aleatorios,
 //en un selec vacio. Al pulsarlo de nuevo, se resetee la lista.
 function getRandomInt(min, max){
