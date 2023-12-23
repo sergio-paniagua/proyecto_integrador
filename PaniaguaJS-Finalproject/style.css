@@ -6,7 +6,7 @@
 }
 
 header {
-    min-height: 20vh;
+    min-height: 10vh;
     margin-top: 10%;
     margin-bottom: 10%;
     width: 100vw;
@@ -34,7 +34,7 @@ a:hover {
 #formulario{
 display: block;
 margin: 0%;
-padding: 5%;
+padding: 1%;
 background-color: black;
 border: solid 2px red;
 width: 300px;
@@ -52,4 +52,17 @@ footer{
 h3{
     margin-right: 10%;
    
+}
+
+.btnFooter{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px;
+}
+
+h6{
+    font-size: small;
+
 }

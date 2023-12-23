@@ -69,13 +69,13 @@ const PintarDB = () => {
           settings_accessibility
       </i>
       <b>${element.nombre}</b><br>
-      <b>${element.ph}</b><br>
-      <b>${element.co2}</b><br>
-      <b>${element.o2}</b><br>
-      <b>${element.hco2}</b><br>
-      <b>${element.eb}</b><br>
-      <b>${element.lactato}</b><br>
-      <b>${element.sat}</b><br>
+      <b>pH: ${element.ph}</b><br>
+      <b>pCO2: ${element.co2} mm Hg</b><br>
+      <b>pO2: ${element.o2} mm Hg</b><br>
+      <b>Bicarbonato: ${element.hco2} mEq/L</b><br>
+      <b>EB: ${element.eb}</b><br>
+      <b>LACTATO: ${element.lactato} mmol/L </b><br>
+      <b>SATURACION: ${element.sat} %</b><br>
   </div>`;
     });
   }
@@ -227,7 +227,7 @@ function interpretarGasometria1(phU, co2U, hco2U, ebU) {
 }
 
 //INTERPRETACION GSA con switch (componente metabolico como variable)
-function interpretarGasometria2(phU, co2U, hco2U, eb) {
+function interpretarGasometria2(phU, co2U, hco2U) {
   let co2esperadoAc = 1.5 * hco2U + 8;
   let co2esperadoAl = 0.7 * hco2U + 21;
   let EBesperado = (co2U - 40) * 0.4;
@@ -236,7 +236,7 @@ function interpretarGasometria2(phU, co2U, hco2U, eb) {
   let interpretacion = "";
 
   if (phU < 7.35) {
-    interpretacion += "Segun el pH Acidemia. Por el bicarbonato  ";
+    interpretacion += "Segun el pH Acidemia. ";
     //estamos ante una acidemia, ¿cual es el trastorno primario?
     //Evaluamos componente metabolico
     switch (hco2U < 22) {
@@ -251,13 +251,13 @@ function interpretarGasometria2(phU, co2U, hco2U, eb) {
     }
 
   if (phU > 7.45) {
-    interpretacion += "Segun el pH Alcalemia. Por el CO2 ";
+    interpretacion += "Segun el pH Alcalemia. ";
   //estamos ante una alcalemia, ¿cual es el trastorno primario?
   //Evaluamos componente metabolico
   switch (hco2U > 26) {
     case co2esperadoAc > co2U:
       interpretacion +=
-        "Alcalosis metabólica con acidosis respiratoria agregada, evaluar contexto clinico. Medir ionograma serico y urinario";
+        "Alcalosis metabólica con acidosis respiratoria agregada, evaluar contexto clinico. Evaluar ionograma serico y urinario";
         break
     case co2esperadoAc < co2U:
       interpretacion +=

@@ -92,7 +92,7 @@
             <input type="text" id="eb" class="form-control my-3" placeholder="EB">
             <input type="text" id="lactato" class="form-control my-3" placeholder="LACTATO">
             <input type="text" id="sat" class="form-control my-3" placeholder="%SAT">
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="submit" class="btn btn-primary d-block mx-auto">Guardar</button>
         </form>
 
         <div id="listaActividades" class="mt-4">
@@ -106,21 +106,21 @@
     </div>
 
     <!-- TERCERA SECCION: INTRPRETACION DE RESULTADOS-->
-    <section>
-        <button id= "analizar" class="d-none toggeable">ANALIZAR RESULTADOS</button>
-        <div id="tabla2" class="card-group"></div>
-    </section>
-
-    <section>
-        <button id="borrar" class="btn-success d-none toggeable" >Eliminar</button>
-    </section>
-
-        <!--LA FUNCION ESTA INCORPORADA EN EL HTLM-->
-      
-    <section>
-        <button class="d-none toggeable" onclick="valoresReferencia()">Valores de Referencia</button>
-        <div id="tabla" class="card-group"></div>
-    </section>
+    <div class="btnFooter">
+        <section>
+            <button id= "analizar" class="d-none toggeable">ANALIZAR RESULTADOS</button>
+            <div id="tabla2" class="card-group"></div>
+        </section>
+    
+        <section>
+            <button id="borrar" class="btn-success d-none toggeable" >Eliminar</button>
+        </section>
+            <!--LA FUNCION ESTA INCORPORADA EN EL HTLM-->
+        <section>
+            <button class="d-none toggeable" onclick="valoresReferencia()">Valores de Referencia</button>
+            <div id="tabla" class="card-group"></div>
+        </section>
+    </div>
 
     <script src="./EAB.js"></script>
     <!-- Optional JavaScript -->
