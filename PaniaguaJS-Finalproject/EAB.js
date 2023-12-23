@@ -12,8 +12,8 @@ let item = {
   sat: "",
 };
 
-borrar = document.getElementById("borrar");
-interpretarU = document.getElementById("analizar");
+let borrar = document.getElementById("borrar");
+let interpretarU = document.getElementById("analizar");
 
 //FUNCIONES
 //para crear un arrays con objetos
@@ -82,19 +82,6 @@ const PintarDB = () => {
 };
 
 //EVENTOS
-formularioU.addEventListener("submit", (e) => {
-  e.preventDefault();
-  let nombreU = document.querySelector("#nombre").value;
-  let phU = document.querySelector("#ph").value;
-  let co2U = document.querySelector("#co2").value;
-  let o2U = document.querySelector("#o2").value;
-  let hco3U = document.querySelector("#hco2").value;
-  let ebU = document.querySelector("#eb").value;
-  let lactatoU = document.querySelector("#lactato").value;
-  let satU = document.querySelector("#sat").value;
-  CrearItem(nombreU, phU, co2U, o2U, hco3U, lactatoU, ebU, satU);
-  GuardarDB();
-});
 
 //Desarrollamos el codigo para la interpretacion de los resultados
 
@@ -192,7 +179,8 @@ function interpretarGasometria(phU, o2U, co2U, hco2U, eb, satU) {
 }
 
 //INTERPRETACION GSA con switch (componente respiratorio como variable)
-function interpretarGasometria1(phU, co2U, hco2U, eb) {
+function interpretarGasometria1(phU, co2U, hco2U, ebU) {
+ 
   let co2esperadoAc = 1.5 * hco2U + 8;
   let co2esperadoAl = 0.7 * hco2U + 21;
   let EBesperado = (co2U - 40) * 0.4;
@@ -200,34 +188,34 @@ function interpretarGasometria1(phU, co2U, hco2U, eb) {
   // 1) Evaluar el pH
   let interpretacion = "";
 
-  if (phU === 7.20) {
+  if (phU < 7.35) {
     interpretacion += "Segun el pH Acidemia. ";
     //estamos ante una acidemia, ¿cual es el trastorno primario?
     //Evaluamos componente respiratorio
     switch (co2U > 45) {
-      case eb === 2:
+      case ebU === 2:
         interpretacion += "Acidosis respiratoria aguda. ";
         break;
-      case eb === EBesperado:
+      case ebU === EBesperado:
         interpretacion += "Acidosis respiratoria cronica. ";
         break;
-      case eb > EBesperado:
+      case ebU > EBesperado:
         interpretacion +=
-          "Acidosis respiratoria cronica, el exceso de base sugiere un trastorno metabolico agregado. Evaluar contexto";
+          "Acidosis respiratoria cronica, el exceso de base sugiere un trastorno metabolico agregado. Verificar saturación y evalar vias aeras";
         break;
   } }
-  if (phU > 7.45) {
+  else if (phU > 7.45) {
     interpretacion += "Segun el pH Alcalemia. ";
   //estamos ante una alcalemia, ¿cual es el trastorno primario?
   //Evaluamos componente respiratorio 
   switch (co2U < 35) {
-    case eb === 2:
+    case ebU === 2:
       interpretacion += "Alcalosis respiratoria aguda. ";
       break;
-    case eb === EBesperado:
+    case ebU === EBesperado:
       interpretacion += "Alcalosis respiratoria cronica. ";
       break;
-    case eb > EBesperado:
+    case ebU > EBesperado:
       interpretacion +=
         "Alcalosis respiratoria cronica, el exceso de base sugiere un trastorno metabolico agregado. Evaluar contexto";
       break;
@@ -237,7 +225,6 @@ function interpretarGasometria1(phU, co2U, hco2U, eb) {
 }
   return interpretacion;
 }
-
 
 //INTERPRETACION GSA con switch (componente metabolico como variable)
 function interpretarGasometria2(phU, co2U, hco2U, eb) {
@@ -307,80 +294,6 @@ function interpretarGasometria2(phU, co2U, hco2U, eb) {
 }
 }
 
-function interpretacionPh (phU){
-  // 1) Evaluar el pH
-  let interpretacion = "";
-
-  if (phU < 7.35) {
-    interpretacion += "Segun el pH Acidemia. ";
-  } else if (phU > 7.45) {
-    interpretacion += "Segun el pH Alcalemia. ";
-  }
-
-  return interpretacion;
-}
-
-function interpretacionPco2(co2U, ebU){
-// 2) Evaluar la PaCO2 para determinar trastornosrespiratorios
-let interpretacion = "";
-switch (co2U > 45) {
- case ebU === 2:
-   interpretacion += "Acidosis respiratoria aguda. ";
-   break;
- case ebU === EBesperado:
-   interpretacion += "Acidosis respiratoria cronica. ";
-   break;
- case ebU > EBesperado:
-   interpretacion +=
-     "Acidosis respiratoria cronica, el exceso de base sugiere un trastorno metabolico agregado";
-   break;
- default:
-   switch (co2U < 35) {
-     case ebU === 2:
-       interpretacion += "Alcalosis respiratoria aguda. ";
-       break;
-     case ebU === EBesperado:
-       interpretacion += "Alcalosis respiratoria cronica";
-       break;
-     case ebU > EBesperado:
-       interpretacion +=
-         "Alcalosis respiratoria cronica, el exceso de base sugiere un trastorno metabolico agregado";
-         break
-   }
-   break
-}
-return interpretacion;
-
-}
-
-function interpretacionMetabolico(hco2U, co2U){
- let interpretacion = "";
- // 3) Evaluar el HCO3 para determinar trastorno metabolico
- switch (hco2U > 26) {
-     case co2esperadoAc > co2U:
-       interpretacion +=
-         "Alcalosis metabólica con acidosis respiratoria agregada, evaluar contexto .";
-         break
-     case co2esperadoAc < co2U:
-       interpretacion +=
-         "Alcalosis metabólica con una alcalosis respiratoria agregada, evaluar contexto .";
-       break;
-     default:
-       switch (hco2U < 22) {
-         case co2esperadoAl > co2U:
-           interpretacion +=
-             "Acidosis metabólica con acidosis respiratoria agregada, evaluar contexto .";
-             break
-         case co2esperadoAl < co2U:
-           interpretacion +=
-             "Acidosis metabólica con una alcalosis respiratoria agregada, evaluar contexto .";
-             break
-       }
-       break;
-   }
-   return interpretacion;
-}
-
 function interpretacionGsa (phU, co2U, ebU, hco2U){
 if (phU){
  interpretacionPh (phU)
@@ -405,10 +318,27 @@ interpretarU.addEventListener("click", (e) => {
   let hco2U = document.querySelector("#hco2").value;
   let ebU = document.querySelector("#eb").value;
   let satU = document.querySelector("#sat").value;
+  let EBesperado = (co2U - 40) * 0.4;
   interpretarGasometria1 (phU, co2U, ebU, hco2U);
   const resultadoInterpretacion = interpretarGasometria1 (phU, co2U, ebU, hco2U);
   Swal.fire(resultadoInterpretacion);
- 
+  alert("el valor del ph es: " + phU + " El valor del CO2 es: " + co2U + " el valor del EB es de: " + ebU + 
+  " el valor del EB esperado es de: " + EBesperado)
+});
+
+//EVENTOS
+formularioU.addEventListener("submit", (e) => {
+  e.preventDefault();
+  let nombreU = document.querySelector("#nombre").value;
+  let phU = document.querySelector("#ph").value;
+  let co2U = document.querySelector("#co2").value;
+  let o2U = document.querySelector("#o2").value;
+  let hco3U = document.querySelector("#hco2").value;
+  let ebU = document.querySelector("#eb").value;
+  let lactatoU = document.querySelector("#lactato").value;
+  let satU = document.querySelector("#sat").value;
+  CrearItem(nombreU, phU, co2U, o2U, hco3U, lactatoU, ebU, satU);
+  GuardarDB();
 });
 
 document.addEventListener("DOMContentLoaded", PintarDB());
